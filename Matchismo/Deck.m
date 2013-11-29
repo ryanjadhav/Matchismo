@@ -48,4 +48,13 @@
     return randomCard;
 }
 
+- (BOOL) isEmpty
+{
+    if ([self.cards count]) {
+        return NO;
+    } else {
+        return YES;
+    }
+}
+
 @end

@@ -7,13 +7,29 @@
 //
 
 #import "CardGameViewController.h"
+#import "PlayingCardDeck.h"
 
 @interface CardGameViewController ()
 @property (weak, nonatomic) IBOutlet UILabel *flipsLabel;
 @property (nonatomic) int flipCount;
+@property (strong, nonatomic) PlayingCardDeck *cardDeck;
 @end
 
 @implementation CardGameViewController
+
+- (PlayingCardDeck *) cardDeck
+{
+    if (!_cardDeck) {
+        _cardDeck = [[PlayingCardDeck alloc] init];
+    }
+    return _cardDeck;
+}
+
+- (void) setCardDeck
+{
+    _cardDeck = [[PlayingCardDeck alloc] init];
+    NSLog(@"deck created");
+}
 
 - (void)setFlipCount:(int)flipCount
 {
@@ -24,18 +40,21 @@
 
 - (IBAction)touchCardButton:(UIButton *)sender
 {
-    if ([sender.currentTitle length]) {
-        [sender setBackgroundImage:[UIImage imageNamed:@"cardback"]
-                          forState:UIControlStateNormal];
-        [sender setTitle:@"" forState:UIControlStateNormal];
-    
+    if (![self.cardDeck isEmpty]) {
+        if ([sender.currentTitle length]) {
+            [sender setBackgroundImage:[UIImage imageNamed:@"cardback"]
+                              forState:UIControlStateNormal];
+            [sender setTitle:@"" forState:UIControlStateNormal];
+        } else {
+            [sender setBackgroundImage:[UIImage imageNamed:@"cardfront"]
+                              forState:UIControlStateNormal];
+            [sender setTitle:[[self.cardDeck drawRandomCard] contents] forState:UIControlStateNormal];
+        }
+        self.flipCount++;
     } else {
-    
-        [sender setBackgroundImage:[UIImage imageNamed:@"cardfront"]
-                          forState:UIControlStateNormal];
-        [sender setTitle:@"A♣️" forState:UIControlStateNormal];
+        [sender setAlpha:0];
     }
-    self.flipCount++;
+    
 }
 
 @end
