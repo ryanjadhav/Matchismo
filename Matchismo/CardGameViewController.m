@@ -12,23 +12,22 @@
 @interface CardGameViewController ()
 @property (weak, nonatomic) IBOutlet UILabel *flipsLabel;
 @property (nonatomic) int flipCount;
-@property (strong, nonatomic) PlayingCardDeck *cardDeck;
+@property (strong, nonatomic) Deck *deck;
 @end
 
 @implementation CardGameViewController
 
-- (PlayingCardDeck *) cardDeck
+- (Deck *)deck
 {
-    if (!_cardDeck) {
-        _cardDeck = [[PlayingCardDeck alloc] init];
+    if (!_deck) {
+        _deck = [self createDeck];
     }
-    return _cardDeck;
+    return _deck;
 }
 
-- (void) setCardDeck
+- (PlayingCardDeck *)createDeck
 {
-    _cardDeck = [[PlayingCardDeck alloc] init];
-    NSLog(@"deck created");
+    return [[PlayingCardDeck alloc] init];
 }
 
 - (void)setFlipCount:(int)flipCount
@@ -40,7 +39,7 @@
 
 - (IBAction)touchCardButton:(UIButton *)sender
 {
-    if (![self.cardDeck isEmpty]) {
+    if (![self.deck isEmpty]) {
         if ([sender.currentTitle length]) {
             [sender setBackgroundImage:[UIImage imageNamed:@"cardback"]
                               forState:UIControlStateNormal];
@@ -48,7 +47,7 @@
         } else {
             [sender setBackgroundImage:[UIImage imageNamed:@"cardfront"]
                               forState:UIControlStateNormal];
-            [sender setTitle:[[self.cardDeck drawRandomCard] contents] forState:UIControlStateNormal];
+            [sender setTitle:[[self.deck drawRandomCard] contents] forState:UIControlStateNormal];
         }
         self.flipCount++;
     } else {

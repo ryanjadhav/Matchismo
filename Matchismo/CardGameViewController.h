@@ -11,6 +11,6 @@
 
 @interface CardGameViewController : UIViewController
 
-- (void)setCardDeck;
+- (PlayingCardDeck *)createDeck;
 
 @end
