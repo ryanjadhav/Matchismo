@@ -13,13 +13,16 @@
 - (int)match:(NSArray *)otherCards
 {
     int score = 0;
-    
-    if ([otherCards count] == 1) {
-        PlayingCard *otherCard = [otherCards firstObject];
+
+    for (PlayingCard *otherCard in otherCards) {
         if ([self.suit isEqualToString:otherCard.suit]) {
             score = 1;
+            self.matched = YES;
+            otherCard.matched = YES;    
         } else if (self.rank == otherCard.rank) {
             score = 4;
+            self.matched = YES;
+            otherCard.matched = YES;
         }
     }
     

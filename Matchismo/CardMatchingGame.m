@@ -10,6 +10,7 @@
 
 @interface CardMatchingGame()
 @property (nonatomic, readwrite) NSInteger score;
+@property (nonatomic, readwrite) NSUInteger numberOfCardsToMatch;
 @property (nonatomic, strong) NSMutableArray *cards; // of Card
 @end
 
@@ -19,13 +20,19 @@ static const int MISMATCH_PENALTY = 2;
 static const int MATCH_BONUS = 4;
 static const int COST_TO_CHOOSE = 1;
 
-- (NSMutableArray *) cards
+- (NSMutableArray *)cards
 {
     if (!_cards) _cards = [[NSMutableArray alloc] init];
     return _cards;
 }
 
-- (instancetype) initWithCardCount:(NSUInteger)count
+- (NSUInteger)numberOfCardsToMatch
+{
+    if (!_numberOfCardsToMatch) [self setNumberOfCardsToTwo];
+    return _numberOfCardsToMatch;
+}
+
+- (instancetype)initWithCardCount:(NSUInteger)count
                          usingDeck:(Deck *)deck
 {
     self = [super init];
@@ -53,17 +60,26 @@ static const int COST_TO_CHOOSE = 1;
         if (card.isChosen) {
             card.chosen = NO;
         } else {
-           // match against another card
+            NSMutableArray *otherCards = [[NSMutableArray alloc] init];
             for (Card *otherCard in self.cards) {
-                if (otherCard.isChosen && !otherCard.isMatched) {
-                    int matchScore = [card match:@[otherCard]];
+                // build array of all chosen cards
+                if (otherCard.isChosen && !otherCard.isMatched && otherCards.count < self.numberOfCardsToMatch) {
+                    [otherCards addObject:otherCard];
+                }
+                
+                // if the array is of the size of the match determine if theres a winner
+                if (otherCards.count == (self.numberOfCardsToMatch - 1)) {
+                    int matchScore = [card match:otherCards];
                     if (matchScore) {
-                        self.score += matchScore * MATCH_BONUS;
-                        card.matched = YES;
-                        otherCard.matched = YES;
+                        NSInteger points = matchScore * MATCH_BONUS;
+                        self.score += points;
+                        self.statusMessage = [NSString stringWithFormat:@"Matched for %d points", points];
                     } else {
                         self.score -= MISMATCH_PENALTY;
-                        otherCard.chosen = NO;
+                        for (Card *cards in otherCards) {
+                            cards.chosen = NO;
+                        }
+                        self.statusMessage = [NSString stringWithFormat:@"Mismatched for -%d points", MISMATCH_PENALTY];
                     }
                     break;
                 }
@@ -79,7 +95,22 @@ static const int COST_TO_CHOOSE = 1;
     return (index < [self.cards count]) ? self.cards[index] : nil;
 }
 
-- (instancetype) init
+- (void)resetScore
+{
+    self.score = 0;
+}
+
+- (void)setNumberOfCardsToTwo
+{
+    self.numberOfCardsToMatch = 2;
+}
+
+- (void)setNumberOfCardsToThree
+{
+    self.numberOfCardsToMatch = 3;
+}
+
+- (instancetype)init
 {
     return nil;
 }

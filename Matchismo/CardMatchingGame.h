@@ -15,7 +15,12 @@
                         usingDeck:(Deck *)deck;
 - (void)chooseCardAtIndex:(NSUInteger)index;
 - (Card *)cardAtIndex:(NSUInteger)index;
+- (void)resetScore;
+- (void)setNumberOfCardsToTwo;
+- (void)setNumberOfCardsToThree;
 
 @property (nonatomic, readonly) NSInteger score;
+@property (nonatomic, readonly) NSUInteger numberOfCardsToMatch;
+@property (nonatomic, strong) NSString *statusMessage;
 
 @end
